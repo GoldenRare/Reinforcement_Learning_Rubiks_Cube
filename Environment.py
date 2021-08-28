@@ -19,6 +19,8 @@ class Rotation(Enum):
     LEFT_PRIME = 3
     FRONT = 4
     FRONT_PRIME = 5
+    RIGHT = 6
+    RIGHT_PRIME = 7
 
 
 class RubiksCube:
@@ -221,6 +223,73 @@ class RubiksCube:
         self.rotate_front()
         self.rotate_front()
 
+    def rotate_right(self):
+        bitmask_front_left_36 = 0b001001001
+        bitmask_back_left_31 = 0b100000000000000000000
+        bitmask_back_left_25 = 0b100000000000000000000000
+        bitmask_back_left_19 = 0b100000000000000000000000000
+        bitmask_top_right_10 = 0b1000000000000000000000000000000000000
+        bitmask_top_right_16 = 0b1000000000000000000000000000000000000000
+        bitmask_top_right_22 = 0b1000000000000000000000000000000000000000000
+        bitmask_bottom_right_45 = 0b001001001000000000000000000000000000000000000000000000
+        # Standard 9 side rotation
+        bitmask_right_left_2 = 0b000100001000000000
+        bitmask_right_left_4 = 0b000000010000000000
+        bitmask_right_left_6 = 0b000000100000000000
+        bitmask_right_right_2 = 0b100001000000000000
+        bitmask_right_right_6 = 0b001000000000000000
+        bitmask_right_right_4 = 0b010000000000000000
+
+        for c in Color:
+            # Find the bits on the bitmask
+            extracted_bits_front_left_36 = self.squares[c.value] & bitmask_front_left_36
+            extracted_bits_back_left_31 = self.squares[c.value] & bitmask_back_left_31
+            extracted_bits_back_left_25 = self.squares[c.value] & bitmask_back_left_25
+            extracted_bits_back_left_19 = self.squares[c.value] & bitmask_back_left_19
+            extracted_bits_top_right_10 = self.squares[c.value] & bitmask_top_right_10
+            extracted_bits_top_right_16 = self.squares[c.value] & bitmask_top_right_16
+            extracted_bits_top_right_22 = self.squares[c.value] & bitmask_top_right_22
+            extracted_bits_bottom_right_45 = self.squares[c.value] & bitmask_bottom_right_45
+            extracted_bits_right_left_2 = self.squares[c.value] & bitmask_right_left_2
+            extracted_bits_right_left_4 = self.squares[c.value] & bitmask_right_left_4
+            extracted_bits_right_left_6 = self.squares[c.value] & bitmask_right_left_6
+            extracted_bits_right_right_2 = self.squares[c.value] & bitmask_right_right_2
+            extracted_bits_right_right_6 = self.squares[c.value] & bitmask_right_right_6
+            extracted_bits_right_right_4 = self.squares[c.value] & bitmask_right_right_4
+            # Remove the bits on the bitmask
+            self.squares[c.value] ^= extracted_bits_front_left_36 | extracted_bits_back_left_31 \
+                                                                  | extracted_bits_back_left_25 \
+                                                                  | extracted_bits_back_left_19 \
+                                                                  | extracted_bits_top_right_10 \
+                                                                  | extracted_bits_top_right_16 \
+                                                                  | extracted_bits_top_right_22 \
+                                                                  | extracted_bits_bottom_right_45 \
+                                                                  | extracted_bits_right_left_2 \
+                                                                  | extracted_bits_right_left_4 \
+                                                                  | extracted_bits_right_left_6 \
+                                                                  | extracted_bits_right_right_2 \
+                                                                  | extracted_bits_right_right_6 \
+                                                                  | extracted_bits_right_right_4
+            # Perform the rotation
+            self.squares[c.value] ^= extracted_bits_front_left_36 << 36 | extracted_bits_back_left_31 << 31 \
+                                                                        | extracted_bits_back_left_25 << 25 \
+                                                                        | extracted_bits_back_left_19 << 19 \
+                                                                        | extracted_bits_top_right_10 >> 10 \
+                                                                        | extracted_bits_top_right_16 >> 16 \
+                                                                        | extracted_bits_top_right_22 >> 22 \
+                                                                        | extracted_bits_bottom_right_45 >> 45 \
+                                                                        | extracted_bits_right_left_2 << 2 \
+                                                                        | extracted_bits_right_left_4 << 4 \
+                                                                        | extracted_bits_right_left_6 << 6 \
+                                                                        | extracted_bits_right_right_2 >> 2 \
+                                                                        | extracted_bits_right_right_6 >> 6 \
+                                                                        | extracted_bits_right_right_4 >> 4
+
+    def rotate_right_prime(self):
+        self.rotate_right()
+        self.rotate_right()
+        self.rotate_right()
+
 
 def default_rubiks_cube():
     squares = []
@@ -238,9 +307,11 @@ for co in Color:
 cube.rotate_left()
 cube.rotate_up()
 cube.rotate_up()
+cube.rotate_right()
 cube.rotate_front()
 cube.rotate_left_prime()
 cube.rotate_up_prime()
+cube.rotate_right_prime()
 cube.rotate_up_prime()
 cube.rotate_left_prime()
 cube.rotate_front_prime()
@@ -248,9 +319,11 @@ cube.rotate_front_prime()
 cube.rotate_front()
 cube.rotate_left()
 cube.rotate_up()
+cube.rotate_right()
 cube.rotate_up()
 cube.rotate_left()
 cube.rotate_front_prime()
+cube.rotate_right_prime()
 cube.rotate_up_prime()
 cube.rotate_up_prime()
 cube.rotate_left_prime()
